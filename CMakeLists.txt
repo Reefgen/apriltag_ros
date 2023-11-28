@@ -51,11 +51,15 @@ add_library(tags OBJECT src/tag_functions.cpp)
 target_link_libraries(tags apriltag::apriltag)
 set_property(TARGET tags PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-add_library(AprilTagNode SHARED src/AprilTagNode.cpp src/april_tag_pose_estimation_node.cpp)
+add_library(AprilTagNode SHARED src/AprilTagNode.cpp)
 ament_target_dependencies(AprilTagNode rclcpp rclcpp_components sensor_msgs apriltag_msgs tf2_ros image_transport cv_bridge)
 target_link_libraries(AprilTagNode apriltag::apriltag tags Eigen3::Eigen)
 rclcpp_components_register_node(AprilTagNode PLUGIN "AprilTagNode" EXECUTABLE "apriltag_node")
-rclcpp_components_register_node(AprilTagNode PLUGIN "AprilTagPoseEstimationNode" EXECUTABLE "apriltag_pose_estimation_node")
+
+add_library(apriltag_pose_estimation SHARED src/april_tag_pose_estimation_node.cpp)
+ament_target_dependencies(apriltag_pose_estimation rclcpp rclcpp_components sensor_msgs apriltag_msgs tf2_ros)
+target_link_libraries(apriltag_pose_estimation apriltag::apriltag tags Eigen3::Eigen)
+rclcpp_components_register_node(apriltag_pose_estimation PLUGIN "AprilTagPoseEstimationNode" EXECUTABLE "apriltag_pose_estimation_node")
 
 ament_environment_hooks(${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH})
 
